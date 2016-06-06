@@ -1,0 +1,5 @@
+import("mclust")
+export("HFMfit")
+export("HFMviterbi")
+export("DrawViterbiTree")
+useDynLib("treeHFM")
