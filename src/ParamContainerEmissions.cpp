@@ -151,12 +151,12 @@ ParamContainerEmissions::~ParamContainerEmissions() {
 	if(this->whichone == MULTIVARIATEGAUSSIAN) {
 		int i;
 		for(i=0; i<this->D; i++) {
-			free(this->mu[i]);
-			free(this->sigma[i]);
+			delete[] this->mu[i];
+			delete[] this->sigma[i];
 			free(this->inverseSigma[i]);
 		}
-		free(this->sigma);
-        free(this->mu);
+		delete[] this->sigma;
+        	delete[] this->mu;
 		free(this->inverseSigma);
 
 		int mem = sizeof(double*)*this->D + sizeof(double)*1 + 2*sizeof(double*)*this->D + 2*sizeof(double)*this->D;

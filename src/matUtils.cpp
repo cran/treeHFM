@@ -31,8 +31,8 @@ void inverse(double** A, int N)
     }
     
     free(Atemp);
-    delete IPIV;
-    delete WORK;
+    delete[] IPIV;
+    delete[] WORK;
 }
 
 
@@ -110,10 +110,10 @@ double matrixDet(double **m, int dim) {
     {       theDet *= myW[i] ;
     }
     
-    delete myAP;
-    delete myW;
-    delete myZ;
-    delete myWork;
+    delete[] myAP;
+    delete[] myW;
+    delete[] myZ;
+    delete[] myWork;
     
     return theDet;
 }
