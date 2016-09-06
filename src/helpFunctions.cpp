@@ -566,7 +566,7 @@ std::vector<double> matrixToVector(std::vector<std::vector<double> > a){
 }
 
 MaxMatrix maxMatrix(std::vector<std::vector<double> > a,int dim){ //finds maximum row/column values in a matrix
-        //cout<<"maxMatrix"<<endl;
+        ////<<"maxMatrix"<<endl;
         std::vector<double> mValues;
         std::vector<int> mIndices;
         double m=-INFINITY;
@@ -684,51 +684,51 @@ double** vectorToArray(std::vector<double> a){
 }
 void print(int v){
 	for (int i = 0; i<v; i++){      // durchl�uft alle Werte von 0 bis 5
-		      cout << i <<"," << endl;
+		      // << i <<"," << endl;
 		}
 }
 
 void printArray(int a[],int lengthA) {
 	for (int i = 0; i<lengthA; i++){      // durchl�uft alle Werte von 0 bis 5
-	      cout << a[i] <<",";
+	      // << a[i] <<",";
 	}
 }
 void printArray(double a[],int lengthA) {
 	for (int i = 0; i<lengthA; i++){      // durchl�uft alle Werte von 0 bis 5
-	      cout << a[i] <<",";
+	      // << a[i] <<",";
 	}
 }
 void printVector(std::vector<int> a) {
 	for (int i = 0; i<a.size(); i++){      // durchl�uft alle Werte von 0 bis 5
-	      cout << a[i] <<",";
+	      // << a[i] <<",";
 	}
-	cout<<endl;
+	//<<endl;
 }
 void printVector(std::vector<std::vector<double> > a) {
 	for (int i = 0; i<a.size(); i++){      // durchl�uft alle Werte von 0 bis 5
 		if(a.at(i).size()>0){
 			for (int j = 0; j<a.at(i).size(); j++){
-				cout << a.at(i).at(j) <<",";
+				// << a.at(i).at(j) <<",";
 			}
-			cout<<endl;
+			//<<endl;
 		}
 	}
-	cout<<endl;
+	//<<endl;
 }
 void printVector(std::vector<std::vector<int> > a) {
 	for (int i = 0; i<a.size(); i++){      // durchl�uft alle Werte von 0 bis 5
 		for (int j = 0; j<a[i].size(); j++){
-			cout << a[i][j] <<",";
+			// << a[i][j] <<",";
 		}
-		cout<<endl;
+		//<<endl;
 	}
-	cout<<endl;
+	//<<endl;
 }
 void printVector(std::vector<double> a) {
 	for (int i = 0; i<a.size(); i++){      // durchl�uft alle Werte von 0 bis 5
-	      cout << a[i] <<",";
+	      // << a[i] <<",";
 	}
-	cout<<endl;
+	//<<endl;
 }
 
 

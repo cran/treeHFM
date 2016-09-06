@@ -5,7 +5,7 @@
 double** allocateNumericMatrix(int d1, int d2) {
 	double **matrix = (double**)malloc(sizeof(double*)*d1);
 	if(matrix == NULL) {
-		printf("Not enough memory!\n");
+		Rprintf("Not enough memory!\n");
 	}
 	
 	int i;
@@ -18,7 +18,7 @@ double** allocateNumericMatrix(int d1, int d2) {
 double* allocateNumericVector(int d) {
 	double *vector = (double*)malloc(sizeof(double)*d);
 	if(vector == NULL) {
-		printf("Not enough memory!\n");
+		Rprintf("Not enough memory!\n");
 	}
 	return vector;
 }
@@ -42,7 +42,7 @@ int allocateMemAlpha(double*** alpha, int maxLen, int K) {
 	double megabytes_used = ((double)memory_used)/1000000;
 	
 	if(DEBUG_MEMORY) {
-		printf("Alpha needs %lf MB of memory.\n", megabytes_used);
+		Rprintf("Alpha needs %lf MB of memory.\n", megabytes_used);
 	}
 	//printf("Available system memory: %d\n", (unsigned int) getTotalSystemMemory());
 	return memory_used;
@@ -66,7 +66,7 @@ int allocateMemBeta(double*** beta, int maxLen, int K) {
 	double megabytes_used = ((double)memory_used)/1000000;
 	
 	if(DEBUG_MEMORY) {
-		printf("Beta needs %lf MB of memory.\n", megabytes_used);
+		Rprintf("Beta needs %lf MB of memory.\n", megabytes_used);
 	}
 	//printf("Available system memory: %d\n", (unsigned int) getTotalSystemMemory());
 	return memory_used;
@@ -87,7 +87,7 @@ int allocateMemRescFac(double** c, int maxLen, int K) {
 	double megabytes_used = ((double)memory_used)/1000000;
 	
 	if(DEBUG_MEMORY) {
-		printf("Rescaling factor needs %lf MB of memory.\n", megabytes_used);
+		Rprintf("Rescaling factor needs %lf MB of memory.\n", megabytes_used);
 	}
 	//printf("Available system memory: %d\n", (unsigned int) getTotalSystemMemory());
 	return memory_used;
@@ -114,7 +114,7 @@ int allocateMemGamma(double*** gamma, int maxLen, int K) {
 	double megabytes_used = ((double)memory_used)/1000000;
 	
 	if(DEBUG_MEMORY) {
-		printf("Gamma needs %lf MB of memory.\n", megabytes_used);
+		Rprintf("Gamma needs %lf MB of memory.\n", megabytes_used);
 	}
 	//printf("Available system memory: %d\n", (unsigned int) getTotalSystemMemory());
 	return memory_used;
@@ -145,7 +145,7 @@ int allocateMemXsi(double**** xsi, int maxLen, int K) {
 	double megabytes_used = ((double)memory_used)/1000000;
 	
 	if(DEBUG_MEMORY) {
-		printf("Xsi needs %lf MB of memory.\n", megabytes_used);
+		Rprintf("Xsi needs %lf MB of memory.\n", megabytes_used);
 	}
 	//printf("Available system memory: %d\n", (unsigned int) getTotalSystemMemory());
 	return memory_used;
@@ -171,7 +171,7 @@ int allocateMemEmissionProb(double*** emissionProb, int maxLen, int K) {
 	double megabytes_used = ((double)memory_used)/1000000;
 	
 	if(DEBUG_MEMORY) {
-		printf("Emission probabilities need %lf MB of memory.\n", megabytes_used);
+		Rprintf("Emission probabilities need %lf MB of memory.\n", megabytes_used);
 	}
 	//printf("Available system memory: %d\n", (unsigned int) getTotalSystemMemory());
 	return memory_used;

@@ -8,7 +8,7 @@ void EmissionFunction::resetShared() {}
 EmissionFunction** allocateEmissionFunctionVector(int d) {
 	EmissionFunction **vector = (EmissionFunction**)malloc(sizeof(EmissionFunction*)*d);
 	if(vector == NULL) {
-		printf("Not enough memory!\n");
+		//Rprintf("Not enough memory!\n");
 	}
 	return vector;
 }

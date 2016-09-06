@@ -171,64 +171,64 @@ void addVariableNode(variableNode &v, int index,int observed,int leaf_node,std::
     }
 }
 void drawFactorNode(factorNode f){
-    cout << "Index:" <<f.order<<endl;
-    cout << "Factor Parents:" <<endl;
+    // << "Index:" <<f.order<<endl;
+    // << "Factor Parents:" <<endl;
     printVector(f.f_parents);
-    cout <<endl<< "Factor Childs:" <<endl;
+    // <<endl<< "Factor Childs:" <<endl;
     printVector(f.f_children);
-    cout <<endl<< "Variable Parents:" <<endl;
+    // <<endl<< "Variable Parents:" <<endl;
     printVector(f.v_parents);
-    cout <<endl<< "Variable Childs:" <<endl;
+    // <<endl<< "Variable Childs:" <<endl;
     printVector(f.v_children);
     
 }
 void printFactorNode(factorNode f){
-    cout << "Index:" <<f.order<<endl;
-    cout << "Factor Parents:" <<endl;
+    // << "Index:" <<f.order<<endl;
+    // << "Factor Parents:" <<endl;
     printVector(f.f_parents);
-    cout <<endl<< "Factor Childs:" <<endl;
+    // <<endl<< "Factor Childs:" <<endl;
     printVector(f.f_children);
-    cout <<endl<< "Variable Parents:" <<endl;
+    // <<endl<< "Variable Parents:" <<endl;
     printVector(f.v_parents);
-    cout <<endl<< "Variable Childs:" <<endl;
+    // <<endl<< "Variable Childs:" <<endl;
     printVector(f.v_children);
     
 }
 void printFactorGraph(struct factorGraph fg){
-    cout<<"----------- FACTOR NODES ------------"<<endl;
+    //<<"----------- FACTOR NODES ------------"<<endl;
     for(int i=300; i<400;i++){
-        cout<<"Index:"<<i<<endl;
-        cout<<fg.factorNodes.at(i).order<<endl;
-        cout<<"factor parents:"<<endl;
+        //<<"Index:"<<i<<endl;
+        //<<fg.factorNodes.at(i).order<<endl;
+        //<<"factor parents:"<<endl;
         printVector(fg.factorNodes.at(i).f_parents);
-        cout<<"variable parents:"<<endl;
+        //<<"variable parents:"<<endl;
         printVector(fg.factorNodes.at(i).v_parents);
-        cout<<"factor children:"<<endl;
+        //<<"factor children:"<<endl;
         printVector(fg.factorNodes.at(i).f_children);
-        cout<<"variable children:"<<endl;
+        //<<"variable children:"<<endl;
         printVector(fg.factorNodes.at(i).v_children);
-        cout<<"variable neighbors:"<<endl;
+        //<<"variable neighbors:"<<endl;
         printVector(fg.factorNodes.at(i).v_neighbors);
-        cout<<"---"<<endl;
+        //<<"---"<<endl;
     }
     /*
-     cout<<"----------- VARIABLE NODES ------------"<<endl;
+     //<<"----------- VARIABLE NODES ------------"<<endl;
      for(int i=200; i<300;i++){
-     cout<<"Index:"<<i<<endl;
-     cout<<fg.variableNodes.at(i).order<<endl;
-     cout<<"factor parents:"<<endl;
+     //<<"Index:"<<i<<endl;
+     //<<fg.variableNodes.at(i).order<<endl;
+     //<<"factor parents:"<<endl;
      printVector(fg.variableNodes.at(i).f_parents);
-     cout<<"variable parents:"<<endl;
+     //<<"variable parents:"<<endl;
      printVector(fg.variableNodes.at(i).v_parents);
-     cout<<"factor children:"<<endl;
+     //<<"factor children:"<<endl;
      printVector(fg.variableNodes.at(i).f_children);
-     cout<<"variable children:"<<endl;
+     //<<"variable children:"<<endl;
      printVector(fg.variableNodes.at(i).v_children);
-     cout<<"variable neighbors:"<<endl;
+     //<<"variable neighbors:"<<endl;
      printVector(fg.variableNodes.at(i).v_neighbors);
-     cout<<"factor neighbors:"<<endl;
+     //<<"factor neighbors:"<<endl;
      printVector(fg.variableNodes.at(i).f_neighbors);
-     cout<<"---"<<endl;
+     //<<"---"<<endl;
      }
      */
 }
@@ -262,7 +262,7 @@ void createHMT(factorGraph &fg,std::vector<int> nodeIndices, std::vector<int> pa
     Max maxV=max(nodeIndices);
     int maxIndex=maxV.value;
     for (int j=1 ; j<=lenObs;j++){
-        //cout<<"j: "<<j<<endl;
+        ////<<"j: "<<j<<endl;
         std::vector<int> f_parents;
         std::vector<int> f_children;
         std::vector<int> v_parents;
@@ -273,7 +273,7 @@ void createHMT(factorGraph &fg,std::vector<int> nodeIndices, std::vector<int> pa
         std::vector<int> v_parents_s;
         std::vector<int> v_children_s;
         if(j==1){
-            //cout<<"found: "<<findIndex(connectivity,1,j)[0]<<endl;
+            ////<<"found: "<<findIndex(connectivity,1,j)[0]<<endl;
             std::vector<int> vT=connectivity.at(findIndex(connectivity,1,j)[0]); //can only be there 1 time?
             //printVector(connectivity);
             if(j==1){
@@ -286,7 +286,7 @@ void createHMT(factorGraph &fg,std::vector<int> nodeIndices, std::vector<int> pa
             f_childrenT.push_back(vT[0]);
             f_childrenT.push_back(j+maxIndex);
             //
-            //cout<<"prob start"<<endl;
+            ////<<"prob start"<<endl;
             std::vector<std::vector<double> > probOStart(max(nodeIndices).value*2);;
             /*
             if(type=='d'){
@@ -297,7 +297,7 @@ void createHMT(factorGraph &fg,std::vector<int> nodeIndices, std::vector<int> pa
             */
             
             probOStart.at(j)=observationProbabilities.at(j-1);
-            //cout<<"probO"<<endl;
+            ////<<"probO"<<endl;
             //v_children.push_back(j+maxIndex);
             //int index,std::vector<double> probS,std::vector<double> probO ,std::vector<int> v_children,std::vector<int> v_parents,std::vector<int> f_children,std::vector<int> f_parents,std::vector<std::vector<int> > summationIndices,int maxNumMessages,int maxSum,int division,int observedFactor,std::vector<int>indicesXD
             int maxNodeIndex=max(nodeIndices).value*2;
@@ -355,7 +355,7 @@ void createHMT(factorGraph &fg,std::vector<int> nodeIndices, std::vector<int> pa
         if(v_children.size()>0){
             std::vector<int> factorNode_f_children=add(v_children,1);
             probO.clear();
-            //cout<<"probO"<<endl;
+            ////<<"probO"<<endl;
             std::vector<std::vector<double> > probO(max(nodeIndices).value*2);
             /*
             if(type=='d'){
@@ -379,7 +379,7 @@ void createHMT(factorGraph &fg,std::vector<int> nodeIndices, std::vector<int> pa
             //(j,startProb,probO,v_children,v_parents,f_childrenT,f_parents,summationIndices,max(nodeIndices)*2,maxSum,0,0,indicesXD);
             int maxNodeIndex=max(nodeIndices).value*2;
             factorNode f;
-            //cout<<"addFactorNode"<<endl;
+            ////<<"addFactorNode"<<endl;
             addFactorNode(f,j+1,probO,v_children,v_parentsF,factorNode_f_children,f_parents,summationIndices,maxNodeIndex,maxSum,division,0,indicesXD,MsgSizeTemp);//factor node right
             if(v_children.size()>1){
                 multipleTransitions.push_back(j+1);

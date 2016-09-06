@@ -31,8 +31,8 @@ void inverse(double** A, int N)
     }
     
     free(Atemp);
-    delete[] IPIV;
-    delete[] WORK;
+    delete IPIV;
+    delete WORK;
 }
 
 
@@ -66,10 +66,10 @@ void inverseR(double** mat, int N) {
 
 
 
-void **matrixMult(double **v1, int d11, int d12, double **v2, int d21, int d22, double **result) {
+void matrixMult(double **v1, int d11, int d12, double **v2, int d21, int d22, double **result) {
     //Rprintf("mat-mult\n");
     if(d12 != d21) {
-        error("Wrong dimensions for matrix multiplication!\n");
+        Rprintf("Wrong dimensions for matrix multiplication!\n");
     }
     int i,j,k;
     
@@ -110,10 +110,10 @@ double matrixDet(double **m, int dim) {
     {       theDet *= myW[i] ;
     }
     
-    delete[] myAP;
-    delete[] myW;
-    delete[] myZ;
-    delete[] myWork;
+    delete myAP;
+    delete myW;
+    delete myZ;
+    delete myWork;
     
     return theDet;
 }

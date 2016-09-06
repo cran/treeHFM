@@ -14,8 +14,9 @@
 #include <R_ext/Error.h>
 #include <cmath>
 
-void inverse(double** A, int N);	
-void **matrixMult(double **v1, int d11, int d12, double **v2, int d21, int d22, double **result);
+void inverse(double** A, int N);
+void inverseR(double** A, int N);
+void matrixMult(double **v1, int d11, int d12, double **v2, int d21, int d22, double **result);
 double matrixDet(double **m, int dim);
 
 #endif
