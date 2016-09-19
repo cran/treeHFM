@@ -8,7 +8,7 @@ void sendMessageVToFHMT( factorGraph &fg, int j, int i){
     std::vector<double> msg_tmp = ones(fg.variableNodes.at(i).size);
     //%msg_tmp = ones(1,3);
     //%msg_tmp = 1;
-    ////cout<<"sendMessageVToFHMT i:"<<i<<" j: "<<j<<endl;
+    //cout<<"sendMessageVToFHMT i:"<<i<<" j: "<<j<<endl;
     double logS_tmp = 0.0;
     std::vector<int> diffInd = setdiff(fg.variableNodes.at(i).f_neighbors,j);
     if (j>i){
@@ -35,7 +35,7 @@ void sendMessageVToFHMT( factorGraph &fg, int j, int i){
             //msg_tmp_norm=msg_tmp*(1/scale);
             //
             //fg.factorNodes.at(j).msg_in_down_scale.push_back(scale);
-            msg msg_in_down;
+            msgD msg_in_down;
             msg_in_down.index=i;
             msg_in_down.msg=multEl(msg_tmp,(1/scale));
             //
@@ -46,10 +46,10 @@ void sendMessageVToFHMT( factorGraph &fg, int j, int i){
             mA.msg=logS_tmp + log(scale);
             fg.factorNodes.at(j).acc_logS_msg_in_down.push_back(mA); //% store the accumulated log scale
             //
-            ////cout<<"msg: "<<endl;
-            ////printVector(msg_in_down.msg);
-            ////cout<<"acc_logS_msg_in_down: "<<mA.msg<<endl;
-            ////cout<<"-----------------------"<<endl;
+            //cout<<"msg: "<<endl;
+            //printVector(msg_in_down.msg);
+            //cout<<"acc_logS_msg_in_down: "<<mA.msg<<endl;
+            //cout<<"-----------------------"<<endl;
             //f(j).msg_in_down_norm=msg_tmp_norm;
         }else{
             msg_tmp = ones(fg.variableNodes.at(i).size);
@@ -59,7 +59,7 @@ void sendMessageVToFHMT( factorGraph &fg, int j, int i){
             //msg_tmp_norm=msg_tmp*(1/scale);
             //
             //fg.factorNodes.at(j).msg_in_down_scale.push_back(scale);
-            msg msg_in_down;
+            msgD msg_in_down;
             msg_in_down.index=i;
             msg_in_down.msg=multEl(msg_tmp,(1/scale));
             //
@@ -69,10 +69,10 @@ void sendMessageVToFHMT( factorGraph &fg, int j, int i){
             mA.index=i;
             mA.msg=log(scale);
             fg.factorNodes.at(j).acc_logS_msg_in_down.push_back(mA); //% store the accumulated log scale
-            ////cout<<"msg: "<<endl;
-            ////printVector(msg_in_down.msg);
-            ////cout<<"acc_logS_msg_in_down: "<<mA.msg<<endl;
-            ////cout<<"-----------------------"<<endl;
+            //cout<<"msg: "<<endl;
+            //printVector(msg_in_down.msg);
+            //cout<<"acc_logS_msg_in_down: "<<mA.msg<<endl;
+            //cout<<"-----------------------"<<endl;
             //f(j).msg_in_down_norm = msg_tmp_norm;
         }
         
@@ -120,7 +120,7 @@ void sendMessageVToFHMT( factorGraph &fg, int j, int i){
                 
             }
             //fg.factorNodes.at(j).msg_in_up_scale.at(i) = scale;
-            msg msg_in_up;
+            msgD msg_in_up;
             msg_in_up.index=i;
             msg_in_up.msg=multEl(msg_tmp,(1/scale));
             //
@@ -132,10 +132,10 @@ void sendMessageVToFHMT( factorGraph &fg, int j, int i){
             mA.msg=logS_tmp + log(scale);
             
             fg.factorNodes.at(j).acc_logS_msg_in_up.push_back(mA); //% store the accumulated log scale
-            ////cout<<"msg: "<<endl;
-            ////printVector(msg_in_up.msg);
-            ////cout<<"acc_logS_msg_in_up: "<<mA.msg<<endl;
-            ////cout<<"-----------------------"<<endl;
+            //cout<<"msg: "<<endl;
+            //printVector(msg_in_up.msg);
+            //cout<<"acc_logS_msg_in_up: "<<mA.msg<<endl;
+            //cout<<"-----------------------"<<endl;
         }else{
             msg_tmp = ones(fg.variableNodes.at(i).size);
             //%msg_tmp = ones(1,3);
@@ -144,7 +144,7 @@ void sendMessageVToFHMT( factorGraph &fg, int j, int i){
             //%msg_tmp_norm=msg_tmp*(1/scale);
             //%
             //fg.factorNodes.at(j).msg_in_up_scale.at(i) = scale;
-            msg msg_in_up;
+            msgD msg_in_up;
             msg_in_up.index=i;
             msg_in_up.msg=multEl(msg_tmp,(1/scale));
             //
@@ -155,10 +155,10 @@ void sendMessageVToFHMT( factorGraph &fg, int j, int i){
             mA.index=i;
             mA.msg=log(scale);
             fg.factorNodes.at(j).acc_logS_msg_in_up.push_back(mA);
-            ////cout<<"msg: "<<endl;
-            ////printVector(msg_in_up.msg);
-            ////cout<<"acc_logS_msg_in_up: "<<mA.msg<<endl;
-            ////cout<<"-----------------------"<<endl;
+            //cout<<"msg: "<<endl;
+            //printVector(msg_in_up.msg);
+            //cout<<"acc_logS_msg_in_up: "<<mA.msg<<endl;
+            //cout<<"-----------------------"<<endl;
             //%f(j).msg_in_up_norm = msg_tmp_norm;
         }
     }
@@ -173,7 +173,7 @@ void sendMessageFToVHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
     //std::vector<factorNode > f =fg.factorNodes;
     std::vector<double > msg_tmp = ones(fg.variableNodes.at(i).size);
     double logS_tmp = 0.0;
-    ////cout<<"sendMessageFToVHMT i:"<<i<<" j: "<<j<<endl;
+    //cout<<"sendMessageFToVHMT i:"<<i<<" j: "<<j<<endl;
     if(j>i){
         std::vector<double > msg_tmpS;
         if(fg.factorNodes.at(j).leaf != 1){
@@ -299,11 +299,11 @@ void sendMessageFToVHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
         //
         //
         
-        msg msg_out_up;
+        msgD msg_out_up;
         msg_out_up.index=i;
         msg_out_up.msg=multEl(msg_tmpS,(1/scale));
-        ////cout<<"out up:"<<endl;
-        ////printVector(msg_out_up.msg);
+        //cout<<"out up:"<<endl;
+        //printVector(msg_out_up.msg);
         fg.factorNodes.at(j).msg_out_up.push_back(msg_out_up);
         fg.factorNodes.at(j).msg_out_up_scale.push_back(scale);
         msgAccLog mA;
@@ -311,9 +311,9 @@ void sendMessageFToVHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
         mA.msg=logS_tmp + log(scale);
         
         fg.factorNodes.at(j).acc_logS_msg_out_up.push_back(mA);
-        ////cout<<"msg: "<<endl;
-        ////printVector(msg_out_up.msg);
-        ////cout<<"acc_logS_msg_out_up: "<<mA.msg<<endl;
+        //cout<<"msg: "<<endl;
+        //printVector(msg_out_up.msg);
+        //cout<<"acc_logS_msg_out_up: "<<mA.msg<<endl;
     }else{
         //j;
         int obs=0;
@@ -332,7 +332,7 @@ void sendMessageFToVHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
                 }
             }
             if(fg.factorNodes.at(j).division){ //check if division =msg_tmp*(1/scale) true and summ states
-                ////cout<<"division"<<endl;
+                //cout<<"division"<<endl;
                 std::vector<double >msg_tmp_strainUp = ones(fg.variableNodes.at(i).size);
                 std::vector<double >msg_tmp_strainDown= ones(fg.variableNodes.at(i).size);
                 int strain=0;
@@ -409,14 +409,11 @@ void sendMessageFToVHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
                 std::vector<std::vector<int> > indicesToSum=fg.factorNodes.at(j).summationIndices;
                 //
                 //
-                //printVector(indicesToSum);
                 //
                 for(int n=0; n<indicesToSum.size();n++){
-                    //printVector(arrangeItems(msg_tmp,indicesToSum.at(n)));
                     msg_tmpM_summed.push_back(sum(arrangeItems(msg_tmp,indicesToSum.at(n))));
                 }
             }else{
-                msg_tmp; //'
                 std::vector<double > xM=msg_tmp;
                 std::vector<std::vector<double > > xMrep=repmat(xM,tM.probDiv.at(0).size(),1);
                 std::vector<std::vector<double > > xMrepT=transpose(xMrep);
@@ -428,7 +425,6 @@ void sendMessageFToVHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
                 msg_tmpM=multEl(xMrepT,xErep);
                 msg_tmpM=multEl(msg_tmpM,tM.probSeq.at(0));
                 msg_tmpM_summed=sum(msg_tmpM,2);
-                //printVector(msg_tmpM_summed);
             }
         }else{
             std::vector<double> xE=fg.factorNodes.at(j).probO.at(i);
@@ -443,7 +439,7 @@ void sendMessageFToVHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
         }
         //
         //
-        msg msg_out_down;
+        msgD msg_out_down;
         msg_out_down.index=i;
         msg_out_down.msg=multEl(msg_tmpM_summed,(1/scale));
         fg.factorNodes.at(j).msg_out_down.push_back(msg_out_down);
@@ -453,9 +449,9 @@ void sendMessageFToVHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
         mA.index=i;
         mA.msg=logS_tmp + log(scale);
         fg.factorNodes.at(j).acc_logS_msg_out_down.push_back(mA);
-        ////cout<<"msg: "<<endl;
-        ////printVector(msg_out_down.msg);
-        ////cout<<"acc_logS_msg_out_down: "<<mA.msg<<endl;
+        //cout<<"msg: "<<endl;
+        //printVector(msg_out_down.msg);
+        //cout<<"acc_logS_msg_out_down: "<<mA.msg<<endl;
     }
     fg.variableNodes.at(i).N_msg_in_sofar = fg.variableNodes.at(i).N_msg_in_sofar + 1;
     fg.factorNodes.at(j).N_msg_out_remain = fg.factorNodes.at(j).N_msg_out_remain - 1;
@@ -501,8 +497,6 @@ factorGraph sumProductAlgorithm(factorGraph fgS, std::vector<int> endNodes, std:
                     break;
                 }else{
                     if (fg.factorNodes.at(actNode).N_msg_in_sofar >= fg.factorNodes.at(actNode).N_v_neighbors - 1){ //if there have not enough messages arrived, stop go to the next end node
-                        actNode;
-                        v_parent;
                         sendMessageFToVHMT(fg,actNode,v_parent.at(0),tM); //only one v_parent possible
                     }else{
                         if(intersect(endNodes,actNode)==0){
@@ -534,7 +528,7 @@ factorGraph sumProductAlgorithm(factorGraph fgS, std::vector<int> endNodes, std:
         }
     }
     //%%%message passing downwards
-    ////cout<<"----------DOWN-------------"<<endl;
+    //cout<<"----------DOWN-------------"<<endl;
     while(startNodes.size()>0){
         
         int actNode=startNodes.at(0);
@@ -582,7 +576,7 @@ factorGraph sumProductAlgorithm(factorGraph fgS, std::vector<int> endNodes, std:
             
         }
     }
-    ////cout<<"SM ended"<<endl;
+    //cout<<"SM ended"<<endl;
     return fg;
 }
 

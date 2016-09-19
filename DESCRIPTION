@@ -1,6 +1,6 @@
 Package: treeHFM
-Version: 1.0.2
-Date: 2016-06-4
+Version: 1.0.3
+Date: 2016-09-17
 Title: Hidden Factor Graph Models
 Author: Henrik Failmezger, Achim Tresch
 Maintainer: Henrik Failmezger <Henrik.Failmezger@googlemail.com>
@@ -10,7 +10,7 @@ Description: Hidden Factor graph models generalise Hidden Markov Models to tree 
 License: GPL (>= 2)
 biocViews: HiddenMarkovModel, Clustering
 LazyLoad: yes
-Packaged: 2016-09-06 17:15:35 UTC; henrikfailmezger
+Packaged: 2016-09-18 19:12:13 UTC; henrikfailmezger
 NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2016-09-06 23:22:50
+Date/Publication: 2016-09-19 01:45:39

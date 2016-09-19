@@ -9,7 +9,7 @@
 
 
 #include "BaumWelch.h"
-
+#include <R.h>
 using namespace std;
 
 
@@ -171,7 +171,7 @@ std::vector<std::vector<double> > calculateYpsilon(factorGraph &fgS,std::vector<
             for(int n1=0;n1<msg_down.size();n1++){
                 Ypsilon.push_back(msg_down.at(n1)*msg_up.at(n1)/sumMSG);
             }
-
+        
             ypsilonAllProb.at(t-1)=Ypsilon;
     }
     return ypsilonAllProb;
@@ -193,12 +193,12 @@ std::vector<std::vector<std::vector<double> > >  calculateSigma(std::vector<obse
             
             if(allObservationSequences.at(os).data.size()>0 && skipSequences.at(os)==0){
                  std::vector<std::vector<double> >ypsilon=allYpsilons.at(os).data;
-
                  std::vector<std::vector<double> > dataS=allObservationSequences.at(os).data;
 
                  std::vector<std::vector<double> > dataComponent=dataS;
                  std::vector<double> ypsilonState=getColumn(ypsilon,n1);
                 if(n1==0){
+                 //printVector(ypsilonState);
                 }
                  std::vector<std::vector<double> > ypsilonComponent=repmat(ypsilonState,dimData,1);
                  //
@@ -227,7 +227,7 @@ std::vector<std::vector<std::vector<double> > >  calculateSigma(std::vector<obse
     }
     covarianceFaktor=0.08;
     SigmaN=addEl(SigmaN,covarianceFaktor);
-    //SigmaN=addEl(multEl(SigmaN,0.8),multEl(covOld,0.2));
+    SigmaN=addEl(multEl(SigmaN,0.8),multEl(covOld,0.2));
     return SigmaN;
 }
 std::vector<double> calculatePI(int nHStates,std::vector<ypsilon> allYpsilon, std::vector <int> skipSequences){
@@ -261,14 +261,11 @@ std::vector< std::vector<double> > calculateBJ(std::vector<observationSequenceDi
             }
         }
     }
-    //printVector(oStates);
     std::vector< std::vector<double> > numerator(nOStates,std::vector<double>(nHStates));
     for (int j=0; j<nHStates;j++){
         for (int k=0; k<nOStates;k++){
             for(int os=0;os<nObs;os++){
                 for(int t=0; t<allObservationSequences.at(os).data.size(); t++){
-                    ////<<"obsS: "<< allObservationSequences.at(os).data.at(t) <<endl;
-                    ////<<"os: "<< oStates.at(k)<<endl;
                     if(allObservationSequences.at(os).data.at(t) == oStates.at(k)){
                         numerator.at(k).at(j)=numerator.at(k).at(j)+allYpsilon.at(os).data.at(t).at(j);
                     }
@@ -276,7 +273,6 @@ std::vector< std::vector<double> > calculateBJ(std::vector<observationSequenceDi
             }
         }
     }
-    ////<<"numerator"<<endl;
     for (int j=0; j<nHStates;j++){
         for (int k=0; k<nOStates;k++){
             bJ.at(j).at(k)=numerator.at(k).at(j)/factor.at(j);
@@ -378,14 +374,13 @@ std::vector<std::vector<double> > calculateMu(std::vector <observationSequence> 
 }
 outputC baumWelch( std::vector <observationSequence> allObservationSequences, std::vector<std::vector<double> > startProbN, std::vector<std::vector<double> > transProbSeqN, std::vector<std::vector<double> > transProbDivN, std::vector<std::vector<double> > emProbN, std::vector<std::vector<double> > muN,  std::vector<std::vector<std::vector<double> > > SigmaN, std::vector<nodeIndices> allNodeIndices, std::vector<std::vector<int> > summationIndices, std::vector<std::vector<int> > stateIndicesSingle, std::vector<int> indicesXD, std::vector<parentIndices > allParentIndices, int type){
     
-    ////<<"----------BAUM WELCH-----------------"<<endl;
 
 //'BAUM WELCH CMO';
 std::vector<double> allLL;
 std::vector<std::vector<double> > allLLSingle;
 int converged=0;
-double ll=-1;
-double ll_old= -INFINITY;
+double ll;
+double ll_old;
 int iterations=0;
 int nHStates=transProbSeqN.size();
 int nDStates=transProbDivN.at(0).size();
@@ -428,42 +423,29 @@ while(!converged){
         if(allObservationSequences.at(osCounter).data.size()>0 && earlyDivision==0){
 
                  dimensionData=SigmaN.at(0).size();
-            
                  int* start_d = (int*)malloc(sizeof(int)*dimensionData);
                  int o;
                  for (o = 0; o < dimensionData; o++) {
                      start_d[o] = o;
-                     	//Rprintf("init %d ", start_d[o]);
                  }
                   
                   std::vector<std::vector<double> > probO(allObservationSequences.at(osCounter).data.at(0).size(),std::vector<double>(nHStates));
                     //int s=0;
                     //ParamContainerEmissions* multGParams= new ParamContainerEmissions(vectorToArray(getColumn(muN,s)), vectorToArray(SigmaN.at(s)), 0, dimensionData, start_d, 1, 1);
-                    ////<<"create MG"<<endl;
                   //MultivariateGaussian mG=MultivariateGaussian(multGParams);
-                //printVector(SigmaN.at(0));
             
                     for(int d=0;d< allObservationSequences.at(osCounter).data.at(0).size(); d++){
                       for(int s=0; s < nHStates; s++){
-                          ////<<"sigma"<<endl;
-                          //printVector(SigmaN.at(s));
-                          ////<<"mu"<<endl;
-                          //printVector(muN);
                           ParamContainerEmissions* multGParams=new ParamContainerEmissions(vectorToArray(getColumn(muN,s)), vectorToArray(SigmaN.at(s)), 0, dimensionData, start_d, 1, 1);
-                          MultivariateGaussian mG=MultivariateGaussian(multGParams);
-                          double prob = mG.calcEmissionProbability(vectorToArray1D(getColumn(allObservationSequences.at(osCounter).data,d)), 0, 0);
-                          ////<<"prob: "<<prob<<endl;
+                          MultivariateGaussian* mG= new MultivariateGaussian(multGParams);
+                          double prob = mG->calcEmissionProbability(vectorToArray1D(getColumn(allObservationSequences.at(osCounter).data,d)), 0, 0);
                           probO.at(d).at(s)=prob;
+                          delete mG;
                         }
-                  }
+                    }
+                  free (start_d);
                   int lenObs=allObservationSequences.at(osCounter).data.at(0).size();
                   int obsProbSize=probO.size();
-                  ////<<"-------muN ------"<<endl;
-                  //printVector(muN);
-                  ////<<"-------SigmaN ------"<<endl;
-                  //printVector(SigmaN.at(0));
-                  ////<<"probO:"<<endl;
-                  //printVector(probO);
                    /*
                   dimData=nrows(observationSequences{os});
                   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -471,11 +453,7 @@ while(!converged){
                   */
             
                 factorGraph fg;
-
                 createHMT(fg,allNodeIndices.at(osCounter).data, allParentIndices.at(osCounter).data,summationIndices,0,vSize,indicesXD,type,probO,transProbSeqN.size(),transProbDivN.at(0).size());
-        //// <<"Time for CreateHMT (seconds): "<< ((double)(finishHMT - startHMT))/CLOCKS_PER_SEC<<endl;
-        //createHMT( std::vector<std::vector<double> > transProbDiv, std::vector<std::vector<double> > emProb,std::vector<int> observations,std::vector<int> nodeIndices, std::vector<int> parents,std::vector<std::vector<int> > summationIndices,int maxSum,int vSize,std::vector< std::vector<int> > indicesXD,char type)
-        ////<<"factorGraph created"<<endl;
                 std::vector<int>endNodes=fg.endNodes;
                 std::vector<int> startNodes;
                 startNodes.push_back(1);
@@ -502,37 +480,23 @@ while(!converged){
                   tP=1;
                   end
         */
-                 ////<<"SP ended"<<endl;
                   int numberNodes=fgN.factorNodes.size();
                   std::vector<double> tP;
-                  //printVector(fgN.strainParents);
                   if(fgN.strainParents.size()>0){
                      tP=tabulate(getColumn(fgN.strainParents,0));
                   }else{
                       tP.push_back(0);
                   }
-                  ////<<"tP"<<endl;
-                  //printVector(tP);
-                  //%%%%%%freaky end nodes
-                  ////<<"endNodes"<<endl;
-                  //printVector(endNodes);
+
                   int endNodeCheck=0;
                   for(int e=0;e<endNodes.size();e++){
                       int eN=endNodes.at(e);
-                      //printVector(fgN.factorNodes.at(osCounter).msg_out_down.msg);
-                      ////<<"eN"<<eN<<endl;
-                      //if(!(fgN.factorNodes.at(osCounter).msg_out_down.msg.size()>0)){
-                          //if(~isempty(find(isnan(fnN.at(eN).msg_out_down.at(1).msg))))
-                              //endNodeCheck=1;
-                          //}
-                      //  }
                   }
             
                   //emptyCells = cellfun('isempty', EijSeq); //%delete the empty cells (multiple observations)
                   //EijSeqT(emptyCells) = [];
                   //%%%%%%%%%%%%%%%%%%%%%%%%%
                   //~isempty(find(isnan(fnN(2).msg_out_up{1}.msg))) ||
-                  ////<<"maxParents"<<endl;
                   Max maxParents;
                   maxParents = max(tP);
                   if(maxParents.value >=3 ||  endNodeCheck ){
@@ -546,89 +510,62 @@ while(!converged){
                       //%%%%%
                      // emptyCells = cellfun('isempty', EijDiv); //delete the empty cells (multiple observations)
                       //
-                      ////<<"eijSeq"<<endl;
                       eijSeq eijSeqObs;
                       eijSeqObs.data=calculateEijSeq(fgN,transProbSeqN,probO,obsProbSize);
                       allEijSeq.at(osCounter)=eijSeqObs;
                       //
-                      ////<<"eijDiv"<<endl;
                       eijDiv eijDivObs;
                       eijDivObs.data = calculateEijDiv(fgN,transProbDivN,probO,stateIndicesSingle,obsProbSize,nHStates,nDStates);
                       allEijDiv.at(osCounter)=eijDivObs;
                       //
-                      ////<<"ypsilon"<<endl;
                       ypsilon ypsilonObs;
                       ypsilonObs.data=calculateYpsilon(fgN,probO,obsProbSize);
                       allYpsilon.at(osCounter)=ypsilonObs;
                  }
-
-                ////<<multEl(fgN.factorNodes.at(1).msg_out_down.at(0).msg,fgN.factorNodes.at(2).msg_out_up.at(0).msg)<<endl;
+         
+            /*
+           
+             */
                 allProbObs.at(osCounter)=(log(sum(multEl(fgN.factorNodes.at(1).msg_out_down.at(0).msg,fgN.factorNodes.at(2).msg_out_up.at(0).msg)))+fgN.factorNodes.at(1).acc_logS_msg_out_down.at(0).msg+fgN.factorNodes.at(2).acc_logS_msg_out_up.at(0).msg);
-                ////<<"allProbObs.at(osCounter): "<<allProbObs.at(osCounter)<<endl;
                  // %allProbObs{os}=log(sum(fnO(1).msg_out_down{1}.*fnO(2).msg_out_up{1}))+fnO(1).acc_logS_msg_out_down(1)+fnO(2).acc_logS_msg_out_up(1);
             }
         }
-        ////<<"allLL"<<endl;
     
-        allLLSingle.push_back(allProbObs);
-        ll_old=ll;
+        if(counterIt>0){
+            ll_old=ll;
+        }
         ll=0;
-
         for(int osCounter=0;osCounter<nObs;osCounter++){
             if(allObservationSequences.at(osCounter).data.size()>0 && skipSequences.at(osCounter)==0){
                 ll=ll+allProbObs.at(osCounter);
             }
         }
         allLL.push_back(ll);
-        if((abs(ll_old-ll)/(abs(ll_old) + abs(ll) + eps))<1e-04 || counterIt>30){
-            ////<<"CONVERGED!!!!"<<endl;
-            converged=1;
-            break;
+        allLLSingle.push_back(allProbObs);
+        if(counterIt>0){
+            if((abs(ll_old-ll)/(abs(ll_old) + abs(ll) + eps))<1e-04 || counterIt>30){
+                converged=1;
+                break;
+            }
         }
         std::vector <double> piN=calculatePI(nHStates,  allYpsilon, skipSequences);
         startProbN.at(0)=piN;
-        ////<<"-------START PROB N ------"<<endl;
-        //printVector(piN);
+ 
         transProbSeqN=calculateTransProbSeq(nHStates,  skipSequences, allEijSeq );
-        ////<<"-------transProbSeqN ------"<<endl;
-        //printVector(transProbSeqN);
+   
         //
+
         transProbDivN=calculateTransProbDiv(nHStates,nDStates, skipSequences,allEijDiv);
-        ////<<"-------transProbDivN ------"<<endl;
-        //printVector(transProbDivN);
+
         muN= calculateMu(allObservationSequences, nHStates, skipSequences,allYpsilon, dimensionData);
-        ////<<"-------muN ------"<<endl;
-        //printVector(muN);
         std::vector<std::vector<std::vector<double> > >  SigmaOld= SigmaN;
         SigmaN= calculateSigma(allObservationSequences, nHStates, allYpsilon,skipSequences, muN, covarianceFaktor,dimensionData,  SigmaOld);
-    
-        /*
-                  //%%Check first if old model matches convergence criterion%%%%%%%%%%%%%%%
-                  allLL.push_back(ll);
-                  ll_old=ll;
-                  ll=0;
-                  //ap=zeros(nObs);
-                  for(int os=0; os <nObs; os++){
-                      if(sllObservationSequences.at(osCounter).size()>0 && skipSequences.at(os)==0){
-                                 ll=ll+allProbObs.at(os);
-                                 //ap.at(os)=allProbObs.at(os);
-                  
-                       }
-                  
-                  }
-                  //allLLSingle.push_back(ap);
-                  
-                  if((abs(ll_old-ll)/(abs(ll_old) + abs(ll) + eps))<1e-04 || counterIt>30){
-                      converged=1;
-                      break
-                  }
-                */
-    
-    ////<<"LL: "<<ll<<endl;
+        
+       
+    Rprintf("Log-Likelihood: %d",ll);
     counterIt=counterIt+1;
     iterations=iterations+1;
     }
-    //printVector(skipSequences);
     outputC bmOutput;
     bmOutput.transProbSeq=transProbSeqN;
     bmOutput.transProbDiv=transProbDivN;
@@ -637,11 +574,10 @@ while(!converged){
     bmOutput.prior=startProbN;
     bmOutput.allLL=allLL;
     bmOutput.allLLSingle=allLLSingle;
-    //printVector(allLL);
     return bmOutput;
 }
 std::vector<int> findNumberOfDiscreteStates(std::vector <observationSequenceDiscrete> allObservationSequences){
-    int maxState= -INFINITY;
+    int maxState=allObservationSequences.at(0).data.at(0);
     for(int i=0; i<allObservationSequences.size(); i++){
             for(int j=0; j<allObservationSequences.at(i).data.size(); j++){
                 if(allObservationSequences.at(i).data.at(j)>maxState){
@@ -649,20 +585,16 @@ std::vector<int> findNumberOfDiscreteStates(std::vector <observationSequenceDisc
                 }
             }
     }
-    ////<<"MAX STATE: "<<maxState<<endl;
     std::vector<int> discreteStates=createSequence(maxState+1,1, maxState+1);
     return discreteStates;
 }
 outputD baumWelchDiscrete( std::vector <observationSequenceDiscrete> allObservationSequences, std::vector<std::vector<double> > startProbN, std::vector<std::vector<double> > transProbSeqN, std::vector<std::vector<double> > transProbDivN, std::vector<std::vector<double> > emProbN,  std::vector<nodeIndices> allNodeIndices, std::vector<std::vector<int> > summationIndices, std::vector<std::vector<int> > stateIndicesSingle, std::vector<int> indicesXD, std::vector<parentIndices > allParentIndices, int type){
-    
-    ////<<"----------BAUM WELCH-----------------"<<endl;
-    
-    //'BAUM WELCH CMO';
+   
     std::vector<double> allLL;
     std::vector<std::vector<double> > allLLSingle;
     int converged=0;
-    double ll=-1;
-    double ll_old= -INFINITY;
+    double ll;
+    double ll_old;
     int iterations=0;
     int nEStates=emProbN.at(0).size();
     int nHStates=transProbSeqN.size();
@@ -675,7 +607,7 @@ outputD baumWelchDiscrete( std::vector <observationSequenceDiscrete> allObservat
     //%
     int nObs=allObservationSequences.size();
     std::vector<int>  oStates= findNumberOfDiscreteStates(allObservationSequences);
-
+   
     
     //%
     std::vector<ypsilon> allYpsilon(nObs);
@@ -686,21 +618,14 @@ outputD baumWelchDiscrete( std::vector <observationSequenceDiscrete> allObservat
     double covarianceFaktor=0.1;
     while(!converged){
         
-        
-        
-        
-        ////<<"Iteration: "<<iterations<<endl;
-        ////<<"START PROB N:"<<endl;
-        //printVector(startProbN);
         int nStart=1;
         //%%%%SCALING NOCHMAL UEBERDENKEN%%%%%%%
         
         int osCounter=0;
         int dimensionData;
         //nObs=1;
-        std::vector<double> allProbObs(nObs,NAN);
+        std::vector<double> allProbObs(nObs,0);
         for(int osCounter=0;osCounter<nObs;osCounter++){
-            ////<<"osCounter: "<<osCounter<<endl;
             std::vector<double>  tPP=tabulate(allParentIndices.at(osCounter).data);
             Max maxParentsInd;
             maxParentsInd = max(tPP);
@@ -714,13 +639,15 @@ outputD baumWelchDiscrete( std::vector <observationSequenceDiscrete> allObservat
                 
    
                 std::vector<std::vector<double> > probO(allObservationSequences.at(osCounter).data.size(),std::vector<double>(nHStates));
-
+                //int s=0;
+                //ParamContainerEmissions* multGParams= new ParamContainerEmissions(vectorToArray(getColumn(muN,s)), vectorToArray(SigmaN.at(s)), 0, dimensionData, start_d, 1, 1);
+                //MultivariateGaussian mG=MultivariateGaussian(multGParams);
+                
                 for(int d=0;d< allObservationSequences.at(osCounter).data.size(); d++){
                     for(int s=0; s < nHStates; s++){
                         probO.at(d).at(s)=emProbN.at(s).at(allObservationSequences.at(osCounter).data.at(d)-1);
                     }
                 }
-
                 int lenObs=allObservationSequences.at(osCounter).data.size();
                 int obsProbSize=probO.size();
                 /*
@@ -728,41 +655,37 @@ outputD baumWelchDiscrete( std::vector <observationSequenceDiscrete> allObservat
                  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                  %mex CPP/FactorGraphOpt.cpp CPP/helpFunctions.cpp
                  */
-                ////<<"START PROB N"<<endl;
-                //printVector(startProbN);
                 factorGraph fg;
-                ////<<"create HMT"<<endl;
                 createHMT(fg,allNodeIndices.at(osCounter).data, allParentIndices.at(osCounter).data,summationIndices,0,vSize,indicesXD,type,probO,transProbSeqN.size(),transProbDivN.at(0).size());
 
+                //createHMT( std::vector<std::vector<double> > transProbDiv, std::vector<std::vector<double> > emProb,std::vector<int> observations,std::vector<int> nodeIndices, std::vector<int> parents,std::vector<std::vector<int> > summationIndices,int maxSum,int vSize,std::vector< std::vector<int> > indicesXD,char type)
                 std::vector<int>endNodes=fg.endNodes;
                 std::vector<int> startNodes;
                 startNodes.push_back(1);
-                ////<<"Sum Product"<<endl;
                 //
                 std::vector< std::vector<std::vector <double> > > transProbDivUD;
                 transProbDivUD.push_back(transProbDivN);
-                //printVector(transProbDivN);
-                ////<<"--"<<endl;
-                //printVector(indicesXD);
                 transProbDivUD.push_back(arrangeItems(transProbDivN,indicesXD));
-                ////<<"--"<<endl;
                 transitionMatrices tM;
                 tM.probDiv=transProbDivUD;
                 std::vector< std::vector<std::vector<double> > > startProbT;
-                ////<<"startProbT"<<endl;
-                //printVector(startProbN);
-                
+  
                 startProbT.push_back(transpose(startProbN));
                 tM.probStart=startProbT;
                 std::vector< std::vector<std::vector<double> > > transProbSeqT;
-                ////<<"transProbSeqN"<<endl;
                 transProbSeqT.push_back(transProbSeqN);
-                //printVector(transProbSeqN);
                 tM.probSeq=transProbSeqT;
                 //
                 
                 factorGraph fgN=sumProductAlgorithm(fg,fg.endNodes,startNodes,tM);
-
+                /*
+                 if(~isempty(strainParents))
+                 tP=tabulate(strainParents(:,1));
+                 tP=tP(:,2);
+                 else
+                 tP=1;
+                 end
+                 */
                 int numberNodes=fgN.factorNodes.size();
                 std::vector<double> tP;
                 int maxParentValue=0;
@@ -770,8 +693,6 @@ outputD baumWelchDiscrete( std::vector <observationSequenceDiscrete> allObservat
                 if(fgN.strainParents.size()>0){
                     tP=tabulate(getColumn(fgN.strainParents,0));
                     //%%%%%%freaky end nodes
-                    //printVector(endNodes);
-                    ////<<"eN"<<endl;
                     for(int e=0;e<endNodes.size();e++){
                         int eN=endNodes.at(e);
                         if(!(fgN.factorNodes.at(osCounter).msg_out_down.size()>0)){
@@ -780,7 +701,6 @@ outputD baumWelchDiscrete( std::vector <observationSequenceDiscrete> allObservat
                             //}
                         }
                     }
-                    //printVector(endNodes);
                     //emptyCells = cellfun('isempty', EijSeq); //%delete the empty cells (multiple observations)
                     //EijSeqT(emptyCells) = [];
                     //%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -801,57 +721,43 @@ outputD baumWelchDiscrete( std::vector <observationSequenceDiscrete> allObservat
                     //%%%%%
                     // emptyCells = cellfun('isempty', EijDiv); //delete the empty cells (multiple observations)
                     //
-                    ////<<"calculate eijSeq"<<endl;
                     eijSeq eijSeqObs;
                     eijSeqObs.data=calculateEijSeq(fgN,transProbSeqN,probO,obsProbSize);
                     allEijSeq.at(osCounter)=eijSeqObs;
                     //
-                    ////<<"calculate eijDiv"<<endl;
                     eijDiv eijDivObs;
                     eijDivObs.data = calculateEijDiv(fgN,transProbDivN,probO,stateIndicesSingle,obsProbSize,nHStates,nDStates);
                     allEijDiv.at(osCounter)=eijDivObs;
                     //
-                    ////<<"calculate ypsilon"<<endl;
                     ypsilon ypsilonObs;
                     ypsilonObs.data=calculateYpsilon(fgN,probO,obsProbSize);
                     allYpsilon.at(osCounter)=ypsilonObs;
                     
                 }
-                ////<<multEl(fgN.factorNodes.at(1).msg_out_down.at(0).msg,fgN.factorNodes.at(2).msg_out_up.at(0).msg)<<endl;
-                ////<<"calculate probO"<<endl;
-                ////<<"log scale:"<<endl;
-                ////<<fgN.factorNodes.at(endNodes.at(0)).acc_logS_msg_out_down.at(0).msg<<endl;
+                //
                 double logScale=0;
                 for(int e=0;e<fgN.factorNodes.size();e++){
-                    ////<<"scale: "<<fgN.factorNodes.at(e).msg_out_down_scale.at(0)<<endl;
-                    //printVector(fgN.factorNodes.at(e).msg_out_down_scale);
                     //logScale=logScale+fgN.factorNodes.at(e).msg_out_down_scale.at(0);
                 }
-                ////<<"messages: "<<endl;
                 for(int e=0;e<fgN.factorNodes.size();e++){
-                    ////<<"scale: "<<fgN.factorNodes.at(e).msg_out_down_scale.at(0)<<endl;
                     if(fgN.factorNodes.at(e).msg_out_down.size()>0){
-                        //printVector(fgN.factorNodes.at(e).msg_out_down.at(0).msg);
                     }
                     //logScale=logScale+fgN.factorNodes.at(e).msg_out_down_scale.at(0);
                 }
-                ////<<"messages Beta: "<<endl;
                 for(int e=0;e<fgN.factorNodes.size();e++){
-                    ////<<"scale: "<<fgN.factorNodes.at(e).msg_out_down_scale.at(0)<<endl;
                     if(fgN.factorNodes.at(e).msg_out_up.size()>0){
-                       // printVector(fgN.factorNodes.at(e).msg_out_up.at(0).msg);
                     }
                     //logScale=logScale+fgN.factorNodes.at(e).msg_out_down_scale.at(0);
                 }
-
                 allProbObs.at(osCounter)=(log(sum(multEl(fgN.factorNodes.at(1).msg_out_down.at(0).msg,fgN.factorNodes.at(2).msg_out_up.at(0).msg)))+fgN.factorNodes.at(1).acc_logS_msg_out_down.at(0).msg+fgN.factorNodes.at(2).acc_logS_msg_out_up.at(0).msg);
                 // %allProbObs{os}=log(sum(fnO(1).msg_out_down{1}.*fnO(2).msg_out_up{1}))+fnO(1).acc_logS_msg_out_down(1)+fnO(2).acc_logS_msg_out_up(1);
             }
         }
         
         
-        allLLSingle.push_back(allProbObs);
-        ll_old=ll;
+        if(counterIt>0){
+            ll_old=ll;
+        }
         ll=0;
         for(int osCounter=0;osCounter<nObs;osCounter++){
             if(allObservationSequences.at(osCounter).data.size()>0 && skipSequences.at(osCounter)==0){
@@ -859,27 +765,19 @@ outputD baumWelchDiscrete( std::vector <observationSequenceDiscrete> allObservat
             }
         }
         allLL.push_back(ll);
-        if((abs(ll_old-ll)/(abs(ll_old) + abs(ll) + eps))<1e-04 || counterIt>30){
-            ////<<"CONVERGED!!!!"<<endl;
-            converged=1;
-            break;
+        allLLSingle.push_back(allProbObs);
+        if(counterIt>0){
+            if((abs(ll_old-ll)/(abs(ll_old) + abs(ll) + eps))<1e-04 || counterIt>30){
+                converged=1;
+                break;
+            }
         }
-        ////<<"calculate PI"<<endl;
         std::vector <double> piN=calculatePI(nHStates,  allYpsilon, skipSequences);
-        //printVector(piN);
         startProbN.at(0)=piN;
-        ////<<"calculate transProbSeqN"<<endl;
         transProbSeqN=calculateTransProbSeq(nHStates,  skipSequences, allEijSeq );
-       // printVector(transProbSeqN);
         //
-        ////<<"calculate transProbDivN"<<endl;
         transProbDivN=calculateTransProbDiv(nHStates,nDStates, skipSequences,allEijDiv);
-        //printVector(transProbDivN);
-        ////<<"calculate emProbN"<<endl;
-        ////<<"----------------------------------------"<<endl;
         emProbN=calculateBJ(allObservationSequences,nHStates, allYpsilon, skipSequences,oStates);
-        //printVector(emProbN);
-        ////<<"emProbN calculated"<<endl;
         /*
          //%%Check first if old model matches convergence criterion%%%%%%%%%%%%%%%
          allLL.push_back(ll);
@@ -901,12 +799,10 @@ outputD baumWelchDiscrete( std::vector <observationSequenceDiscrete> allObservat
          break
          }
          */
-        
-        ////<<"LL: "<<ll<<endl;
+        Rprintf("Log-Likelihood: %d",ll);
         iterations=iterations+1;
         counterIt=counterIt+1;
     }
-    //printVector(skipSequences);
     outputD bmOutput;
     bmOutput.transProbSeq=transProbSeqN;
     bmOutput.transProbDiv=transProbDivN;

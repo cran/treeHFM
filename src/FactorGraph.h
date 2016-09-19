@@ -1,10 +1,4 @@
-//
-//  FactorGraph.h
-//  FGBMA
-//
-//  Created by Henrik Failmezger on 16.01.15.
-//  Copyright (c) 2015 Henrik Failmezger. All rights reserved.
-//
+
 
 #ifndef __FGBMA__FactorGraph__
 #define __FGBMA__FactorGraph__
@@ -13,7 +7,7 @@
 #include "FactorGraph.h"
 #include <vector>
 
-struct msg{
+struct msgD{
     std::vector<double> msg;
     int index;
 };
@@ -51,10 +45,10 @@ struct factorNode {         /* deklariert den Strukturtyp person */
     //
     std::vector<int>  indicesXD;
     std::vector<std::vector<int> >  summationIndices;
-    std::vector<msg > msg_out_up;
-    std::vector<msg> msg_out_down;
-    std::vector<msg > msg_in_down;
-    std::vector<msg > msg_in_up;
+    std::vector<msgD > msg_out_up;
+    std::vector<msgD> msg_out_down;
+    std::vector<msgD > msg_in_down;
+    std::vector<msgD > msg_in_up;
     //
     std::vector<double> msg_out_up_scale;
     std::vector<double> msg_out_down_scale;
@@ -113,7 +107,7 @@ struct transitionMatrices{
 };
 
 int findMessage(std::vector<msgAccLog> msgV,int index);
-int findMessage(std::vector<msg> msgV,int index);
+int findMessage(std::vector<msgD> msgV,int index);
 int findMessage(std::vector<msgB> msgV,int index);
 std::vector<int> unionV(std::vector<int>A, std::vector<int>B);
 void createHMT(factorGraph &fg, std::vector<int> nodeIndices, std::vector<int> parents,std::vector<std::vector<int> > summationIndices,int maxSum,int vSize,std::vector<int>  indicesXD,char type,std::vector<std::vector<double> > observationProbabilities,int sizeMsgSeq,int sizeMsgDiv);

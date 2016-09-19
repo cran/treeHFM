@@ -9,8 +9,6 @@
 #include "MaxSum.h"
 using namespace std;
 void sendMessageVToFMSHMT( factorGraph &fg, int j, int i){
-    //////<<"sendMessageVToFMSHMT"<<endl;
-    //////<<"v: i: "<<i<<" ->"<<"f: j:" <<j<<endl;
     //std::vector<variableNode > v =fg.variableNodes;
     //std::vector<factorNode > f =fg.factorNodes;
     std::vector<double> msg_tmp = zeros(fg.variableNodes.at(i).size);
@@ -40,14 +38,13 @@ void sendMessageVToFMSHMT( factorGraph &fg, int j, int i){
             //msg_tmp_norm=msg_tmp*(1/scale);
             //
             //fg.factorNodes.at(j).msg_in_down_scale.push_back(scale);
-            msg msg_in_down;
+            msgD msg_in_down;
             msg_in_down.msg=msg_tmp;
             msg_in_down.index=i;
             //
             fg.factorNodes.at(j).msg_in_down.push_back(msg_in_down);
             fg.factorNodes.at(j).N_msg_in_down=fg.variableNodes.at(j).N_msg_in_down+1;
             //
-            ////<<"msg_in_down";
             //f(j).msg_in_down_norm=msg_tmp_norm;
         }else{
 
@@ -57,7 +54,7 @@ void sendMessageVToFMSHMT( factorGraph &fg, int j, int i){
             //msg_tmp_norm=msg_tmp*(1/scale);
             //
             //fg.factorNodes.at(j).msg_in_down_scale.push_back(scale);
-            msg msg_in_down;
+            msgD msg_in_down;
             msg_in_down.msg=msg_tmp;
             msg_in_down.index=i;
             //
@@ -66,7 +63,6 @@ void sendMessageVToFMSHMT( factorGraph &fg, int j, int i){
             msgAccLog mA;
             mA.index=i;
             //
-            //////<<"msg_in_down";
             //f(j).msg_in_down_norm = msg_tmp_norm;
         }
         
@@ -96,12 +92,11 @@ void sendMessageVToFMSHMT( factorGraph &fg, int j, int i){
             }
             //%msg_tmp_norm=msg_tmp*(1/scale);
             //
-            msg msg_in_up;
+            msgD msg_in_up;
             msg_in_up.index=i;
             msg_in_up.msg=msg_tmp;
             //fg.factorNodes.at(j).msg_in_up_scale.at(i) = scale;
             //
-            //////<<"msg_in_up";
             //
             fg.factorNodes.at(j).msg_in_up.push_back(msg_in_up);
             fg.factorNodes.at(j).N_msg_in_up=fg.variableNodes.at(j).N_msg_in_up+1;
@@ -113,12 +108,11 @@ void sendMessageVToFMSHMT( factorGraph &fg, int j, int i){
             //%msg_tmp_norm=msg_tmp*(1/scale);
             //%
             //fg.factorNodes.at(j).msg_in_up_scale.at(i) = scale;
-            msg msg_in_up;
+            msgD msg_in_up;
             msg_in_up.index=i;
             msg_in_up.msg=msg_tmp;
             //
             fg.factorNodes.at(j).msg_in_up.push_back(msg_in_up);
-            //////<<"msg_in_up";
         }
     }
     
@@ -127,8 +121,6 @@ void sendMessageVToFMSHMT( factorGraph &fg, int j, int i){
 }
 
 void sendMessageFToVMSHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
-     //////<<"sendMessageFToVMSHMT"<<endl;
-     //////<<"f: j: "<<j<<" ->"<<"v: i:" <<i<<endl;
     //UNTITLED3 Summary of this function goes here
     //   Send a message from factor node f(j) to variable node v(i)
     
@@ -153,7 +145,6 @@ void sendMessageFToVMSHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
                     
                 }
             }
-            //////<<"---------------------------------------------msg_tmp start-------------------------";
             
             std::vector<double > xM=msg_tmp;
             std::vector<double >xMN=msg_tmp;
@@ -162,7 +153,6 @@ void sendMessageFToVMSHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
             //replaces repmat because of speed
             
             if(fg.factorNodes.at(j).division){
-                //////<<"division"<<endl;
                 strain=0;
                 std::vector< std::vector<double > > msg_tmp_strainUp;
                 std::vector<int> diffInd = setdiff(fg.factorNodes.at(j).v_neighbors,i);
@@ -228,24 +218,18 @@ void sendMessageFToVMSHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
                 msg_tmpM=addEl(msg_tmpM,log2M(oMDrep));
                 msg_tmpM=addEl(msg_tmpM,xMDrep);
                 if(j==111){
-                    //////<<"msg_tmpM"<<endl;
                 }
                 
             }else{
                
-                //////<<"straight"<<endl;
                 std::vector<double >xE=fg.factorNodes.at(j).probO.at(max(fg.factorNodes.at(j).v_neighbors).value);//';
                 std::vector<std::vector<double > >xErep=repmat(xE,tM.probSeq.at(0).size(),1);
                 
                 std::vector<std::vector<double > >xMrep=repmat(xM,tM.probSeq.at(0).size(),1);
                 msg_tmpM=addEl(xMrep,log2M(xErep));
                 msg_tmpM =addEl(msg_tmpM,log2M(tM.probSeq.at(0)));
-                //////<<"msg_tmpM"<<endl;
-                if(j==139){
-                  //  ////<<"---------------------------------------------end node-------------------------";
-                  //  ////<<"rep1"<<endl;
-                  //  ////<<"msg_tmpM"<<endl;
-                }
+
+
             }
             
             
@@ -255,26 +239,21 @@ void sendMessageFToVMSHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
         //
         //
         if(j==111){
-            //////<<"msg_tmpM: "<<endl;
         }
         std::vector<double > msg_tmp;
         if(msg_tmpM.size()>1){
             MaxMatrix mMC=maxMatrix(msg_tmpM,1);//the sum is implicit
             std::vector<int > cordsIndicesR=createSequence(msg_tmpM.size(),0,msg_tmpM.size());
             if(j==111){
-                //////<<"MSG TEMP: "<<endl;
-                //////<<"cords indices"<<endl;
             }
             std::vector<int > cordsIndicesC=mMC.index;
             if(j==111){
-                //////<<"cords values"<<endl;
             }
             std::vector<double > msg_tmp_summed1;
             for(int nc=0;nc<msg_tmpM.size();nc++){
                 msg_tmp_summed1.push_back(msg_tmpM.at(cordsIndicesR.at(nc)).at(cordsIndicesC.at(nc)));
             }
             if(j==111){
-                //////<<"msg_tmp_summed1"<<endl;
             }
             msg_tmp=msg_tmp_summed1;
             //
@@ -297,12 +276,11 @@ void sendMessageFToVMSHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
             fg.factorNodes.at(j).backwardUp.push_back(msgBUP);
         }
         
-        msg msg_out_up;
+        msgD msg_out_up;
         msg_out_up.msg=msg_tmp;
         msg_out_up.index=i;
         fg.factorNodes.at(j).msg_out_up.push_back(msg_out_up);
         fg.factorNodes.at(j).N_msg_out_remain = 0;
-        //////<<"-------------------msg_out_up-----------------"<<endl;
         //fg.factorNodes.at(j).msg_out_up_scale.at(i)=scale;
     }else{
         //j;
@@ -311,37 +289,29 @@ void sendMessageFToVMSHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
         std::vector<double > msg_out;
         std::vector<double > msg_tmp_strainUp=zeros(fg.variableNodes.at(i).size);
         std::vector<double > msg_tmp_strainDown=zeros(fg.variableNodes.at(i).size);
-       // ////<<"upwards"<<endl;
-       // ////<<fg.factorNodes.at(j).leaf<<endl;
+
         if (fg.factorNodes.at(j).leaf != 1){
         ////////////////////////////////////
             if(j==20){
-                ////<<"v_neighbors"<<endl;
             }
             std::vector<int> diffInd = setdiff(fg.factorNodes.at(j).v_neighbors,i);
-            ////<<"diffInd"<<endl;
             double logS_tmp = 0.0;
             for (int m=0; m<diffInd.size();m++){
                 int k=diffInd.at(m);
                 if(k < j){ //% down x(k)-->f(j)
                     if(j==20){
-                        ////<<"k: "<<k<<"j: "<<j<<endl;
                     }
                     msg_tmp = addEl(msg_tmp,fg.factorNodes.at(j).msg_in_down.at(findMessage(fg.factorNodes.at(j).msg_in_down,k)).msg);
                 }else{ //% k > i up x(k)-->f(j)
                     if(j==20){
-                        ////<<"k: "<<k<<"j: "<<j<<endl;
-                   
                     }
                     msg_tmp = addEl(msg_tmp,fg.factorNodes.at(j).msg_in_up.at(findMessage(fg.factorNodes.at(j).msg_in_up,k)).msg);
                 }
             }
             if(j==20){
-                ////<<"msg_tmp"<<endl;
             }
             if(fg.factorNodes.at(j).division){ //check if division =msg_tmp*(1/scale) true and summ states
                 
-                ////<<"division msg"<<endl;
                 int variableIndex=0;
                 if(strain>i){
                     variableIndex=1;
@@ -365,7 +335,6 @@ void sendMessageFToVMSHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
                     }
                 }
                 if(j==20){
-                    ////<<"oMU"<<endl;
                 }
                 //- strain
                 std::vector<double > oMD;
@@ -376,7 +345,6 @@ void sendMessageFToVMSHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
                 }
                 oMD=arrangeItems(oMD,fg.factorNodes.at(j).indicesXD); //rearrange the entries for X2
                 if(j==20){
-                    ////<<"oMD"<<endl;
                 }
                 ////////////////////////////////////////////////////
                 std::vector<double >msg_tmp_strainUp = ones(fg.variableNodes.at(i).size);
@@ -397,49 +365,36 @@ void sendMessageFToVMSHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
                     variableIndex=1;
                 }
                 
-                //////<<"msg_tmp_strainDown"<<endl;
-                //////<<"msg_tmp_strainUp"<<endl;
+
                 ////////////////////////////////////////////////////
                 std::vector<std::vector<double > > xMDown=repmat(msg_tmp_strainDown,tM.probDiv.at(variableIndex).at(0).size(),1);
                 std::vector<std::vector<double > > xMDownT=transpose(xMDown);
                 //UP
-                //////<<"UP"<<endl;
                 std::vector<double > xMUp;
                 for(int c=0;c<tM.probDiv.at(variableIndex).size();c++){
                     for (int l=0;l<msg_tmp_strainUp.size();l++){
                         xMUp.push_back(msg_tmp_strainUp.at(l));
                     }
                 }
-                //////<<"xMUp"<<endl;
                 std::vector<std::vector<double > > xMUprep=repmat(xMUp,tM.probDiv.at(variableIndex).size(),1);
                 //
                 std::vector<std::vector<double > > oMUrep=repmat(oMU,tM.probDiv.at(0).size(),1);
-                //////<<"oMUrep"<<endl;
                 std::vector<std::vector<double > > oMDrep=repmat(oMD,tM.probDiv.at(0).size(),1);
                 std::vector<std::vector<double > > transmatObs=addEl(log2M(oMUrep),log2M(tM.probDiv.at(0)));
-                //////<<"oMDrep"<<endl;
-                //////<<"transmatObs"<<endl;
-                //
-
                 transmatObs=addEl(transmatObs,log2M(oMDrep));
-                //////<<endl<<variableIndex<<endl;
                 if(variableIndex==1){
                     transmatObs=arrangeItems(transmatObs,fg.factorNodes.at(j).indicesXD);
                 }
-                //////<<"transmatObs"<<endl;
-                //////<<"msg_tmpM"<<endl;
+
                 msg_tmpM=addEl(xMDownT,transmatObs);
-               // ////<<"xMUprep"<<endl;
+         
                 msg_tmpM=addEl(msg_tmpM,xMUprep);
-                //////<<"msg_tmpM"<<endl;
-                //
                 std::vector<std::vector<int> > indicesToSum=fg.factorNodes.at(j).summationIndices;
                 //
                 //
 
                 //////////////////////////////////////////////////////////////////
         }else{
-            msg_tmp; //'
             
             std::vector<double > xM=msg_tmp;
             std::vector<std::vector<double > > xMrep=repmat(xM,tM.probDiv.at(0).size(),1);
@@ -450,72 +405,35 @@ void sendMessageFToVMSHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
             obs=0;
             msg_tmpM=addEl(xMrepT,log2M(xErep));
             msg_tmpM=addEl(msg_tmpM,log2M(tM.probSeq.at(0)));
-            
-            /*
-            if(j==2){
-                ////<<"xMrepT: "<<endl;
-                ////<<"xErep: "<<endl;
-                ////<<"prob seq"<<endl;
-                ////<<"msg_tmpM"<<endl;
-            }
-             */
+  
         }
         }else{
                 std::vector<double> xE=fg.factorNodes.at(j).probO.at(i);
             
                 msg_tmp = addEl(fg.factorNodes.at(j).msg_in_down.at(findMessage(fg.factorNodes.at(j).msg_in_down,1)).msg,log2M(tM.probStart.at(0).at(0)));
-           /*
-            if(j==1){
-                ////<<"------------------------------------------------"<<endl;
-                ////<<"message"<<endl;
-                ////<<"obs"<<endl;
-                ////<<"xE"<<endl;
-                ////<<endl;
-                ////<<"msg_tmp1"<<endl;
-            
-            }
-            */
+          
                 msg_tmpM_summed = addEl(msg_tmp,log2M(xE));
-            if(j==1){
-             //   ////<<"msg_tmpM_summed"<<endl;
-             //
-            }
+            
         }
         std::vector<double> msg_tmp_summed1;
         
         //Summation from downwards variable
-        //////<<"msg_tmpM"<<endl;
+  
         std::vector<int> maxVj;
         if(msg_tmpM.size()>1){
-            if(j==20){
-                ////<<"msg_tmpM"<<endl;
-            }
+          
             
             MaxMatrix mMC=maxMatrix(msg_tmpM,2);//the sum is implicit
-            //////<<"sequence"<<endl;
             std::vector<int > cordsIndicesR=createSequence(msg_tmpM.at(0).size(),0,msg_tmpM.at(0).size());
-            if(j==20){
-                ////<<"cordsIndicesR"<<endl;
-                ////<<endl;
-            }
+          
             std::vector<int > cordsIndicesC=mMC.index;
-            if(j==20){
-                ////<<"cordsIndicesC"<<endl;
-            }
-          //  ////<<msg_tmpM.at(0).size()<<endl;
+            
             for(int nc=0;nc<msg_tmpM.at(0).size();nc++){
-                if(j==20){
-                 //   ////<<"nc: "<<nc<<endl;
-                 //   ////<<cordsIndicesR.at(nc)<<endl;
-                 //   ////<<cordsIndicesC.at(nc)<<endl;
-                 //   ////<<" m "<<msg_tmpM.at(cordsIndicesC.at(nc)).at(cordsIndicesR.at(nc))<<endl;
-                }
                 msg_tmp_summed1.push_back(msg_tmpM.at(cordsIndicesC.at(nc)).at(cordsIndicesR.at(nc)));
             }
             std::vector<double>  msg_tmp=msg_tmp_summed1;
             maxVj=cordsIndicesC;
             //
-            //////<<"assign"<<endl;
             msg_out=msg_tmp_summed1;
             msgB msgBD;
             msgBD.bd=maxVj;
@@ -523,7 +441,6 @@ void sendMessageFToVMSHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
             //
             fg.factorNodes.at(j).backwardDown.push_back(msgBD); // backward down values
         }else{
-          //  ////<<"msg_tmpM single:"<<endl;
             msg_tmp=msg_tmpM_summed;
             //
             maxVj=zerosINT(msg_tmpM_summed.size());
@@ -534,43 +451,33 @@ void sendMessageFToVMSHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
             fg.factorNodes.at(j).backwardDown.push_back(msgBD);////?????????
             msg_out=msg_tmp;
         }
-        if(j==20){
-            ////<<"msg_tmp_summed1"<<endl;
-        }
+        
         //Summation from upwards variable 
         if(fg.factorNodes.at(j).division){ //check if division = true and summ states
-           // ////<<"division: "<<endl;
             std::vector< std::vector<int> > indicesToSum=fg.factorNodes.at(j).summationIndices;
             std::vector<double>  msg_tmp_summed2;
             std::vector<int> cordsMaxValues;
             std::vector<int> maxVjN;
             for(int n=0;n<indicesToSum.size();n++){
-                //////<<"n :"<<n<<endl;
                 Max maxValueA=max( getValuesIndex(msg_tmp_summed1,indicesToSum.at(n)));
-                ////<<"m2"<<endl;
-                ////<<"v: "<<maxValueA.value<<endl;
                 msg_tmp_summed2.push_back(maxValueA.value);
                 ///
                 cordsMaxValues.push_back(indicesToSum.at(n).at(maxValueA.index));
                 ///
                 maxVjN.push_back(maxValueA.index);
             }
-            if(j==20){
-                ////<<"msg_tmp_summed2"<<endl;
-            }
-            //////<<"indices to sum"<<endl;
+           
             //
             Max maxValueBD=max(setdiff(fg.factorNodes.at(j).v_neighbors,i));
             Min minValueBD=min(setdiff(fg.factorNodes.at(j).v_neighbors,i));
             //
-            ////<<"msgBD"<<endl;
+
             msgB msgBD;
             std::vector<int> arrangedM=arrangeItems(maxVj,cordsMaxValues);
             msgBD.bd=arrangedM;
             msgBD.index=minValueBD.value;
             //
             //
-            ////<<"msgBDMI"<<endl;
             msgB msgBDMI;
             std::vector<int> arrangedMI=arrangeItems(maxVj,cordsMaxValues);
             msgBDMI.bd=arrangedMI;
@@ -582,10 +489,9 @@ void sendMessageFToVMSHMT( factorGraph &fg, int j, int i,transitionMatrices tM){
             
             msg_out =msg_tmp_summed2;
         }
-        msg msg_out_down;
+        msgD msg_out_down;
         msg_out_down.index=i;
         msg_out_down.msg=msg_out;
-        ////<<"----------- MSGOUTDOWN --------"<<endl;
         
         fg.factorNodes.at(j).msg_out_down.push_back(msg_out_down);
 }
@@ -602,7 +508,6 @@ std::vector<std::vector<int> > maxSumAlgorithm(factorGraph fgS, std::vector<int>
     int counterM=0;
     //%%%message passing upwards
     std::string msg;
-    ////<<"MS endNodes"<<endl;
     
     while (endNodes.size()>0){
         int actNode=endNodes.at(0);
@@ -634,8 +539,6 @@ std::vector<std::vector<int> > maxSumAlgorithm(factorGraph fgS, std::vector<int>
                     break;
                 }else{
                     if (fg.factorNodes.at(actNode).N_msg_in_sofar >= fg.factorNodes.at(actNode).N_v_neighbors - 1){ //if there have not enough messages arrived, stop go to the next end node
-                        actNode;
-                        v_parent;
                         sendMessageFToVMSHMT(fg,actNode,v_parent.at(0),tM); //only one v_parent possible
                     }else{
                         if(intersect(endNodes,actNode)==0){
@@ -700,7 +603,6 @@ std::vector<std::vector<int> > maxSumAlgorithm(factorGraph fgS, std::vector<int>
                 
             }else if(msg=="v-->f"){
                 
-                'g';
                 if(fg.variableNodes.at(actNode).f_children.size()>0){
                     int f_child=max(fg.variableNodes.at(actNode).f_children).value;
                     sendMessageVToFMSHMT(fg,f_child,actNode);
@@ -720,10 +622,6 @@ std::vector<std::vector<int> > maxSumAlgorithm(factorGraph fgS, std::vector<int>
     //////////////////////////////////////////MAXPATH///////////////////////////////////////
     std::vector<int> visitedNodes=zerosINT(N_V+1);
     std::vector<std::vector<int> > maxPath;
-    ////<<"N_V: "<<N_V<<endl;
-    
-    ////<<"calc max path"<<endl;
-    ////<<"end nodes"<<endl;
     int pathWalk=0;
     int maxStateNext;
     //
@@ -739,37 +637,29 @@ std::vector<std::vector<int> > maxSumAlgorithm(factorGraph fgS, std::vector<int>
     int counterMax=0;
     while(strains.size()>0){
         int actNode=strains.front();
-        ////<<"-----------------------------------------------------------------"<<endl;
-        ////<<"actNode: "<<actNode<<endl;
+
         visitedNodes.at(actNode)=1;
        
         f_parent=fg.variableNodes.at(actNode).f_parents;
         v_parent=fg.variableNodes.at(actNode).v_parents;
-        ////<<"v_parent"<<v_parent.at(0)<<endl;
-        ////<<"msg: "<<findMessage(fg.factorNodes.at(f_parent.at(0)).msg_out_down,actNode)<<endl;
+   
         
         Max maxValue;
         maxValue=max(fg.factorNodes.at(f_parent.at(0)).msg_out_down.at(findMessage(fg.factorNodes.at(f_parent.at(0)).msg_out_down,actNode)).msg);
         counterMax++;
         //
-        ////<<"maxValue: "<<maxValue.value<<endl;
         double pMax=maxValue.value;
         int maxState=maxValue.index;
-        ////<<"maxState: "<<maxState<<endl;
         //
         std::vector<int> maxPathValue;
         maxPathValue.push_back(actNode);
         maxPathValue.push_back(maxState+1);
         maxPathValue.push_back(fg.variableNodes.at(actNode).strain);
-        ////<<"v_parent: "<<v_parent.at(0)<<endl;
         maxPathValue.push_back(fg.variableNodes.at(v_parent.at(0)).strain);
         //
-        ////<<"findMessage(fg.factorNodes.at(f_parent.at(0)).backwardDown,v_parent.at(0)): "<<findMessage(fg.factorNodes.at(f_parent.at(0)).backwardDown,v_parent.at(0))<<endl;
         maxPath.push_back(maxPathValue);
         maxStateNext=fg.factorNodes.at(f_parent.at(0)).backwardDown.at(findMessage(fg.factorNodes.at(f_parent.at(0)).backwardDown,v_parent.at(0))).bd.at(maxState);
         actNode=fg.variableNodes.at(actNode).v_parents.at(0);
-        ////<<"path walk"<<endl;
-        ////<<"actNode: "<<actNode<<endl;
         
         pathWalk=1;
         while(pathWalk==1){
@@ -779,16 +669,11 @@ std::vector<std::vector<int> > maxSumAlgorithm(factorGraph fgS, std::vector<int>
                 
                 maxState=maxStateNext;
                 //
-                ////<<"maxPathValue"<<endl;
                 std::vector<int> maxPathValue;
                 maxPathValue.push_back(actNode);
                 maxPathValue.push_back(maxState+1);
-                ////<<fg.variableNodes.at(actNode).strain<<endl;
                 maxPathValue.push_back(fg.variableNodes.at(actNode).strain);
-                ////<<"v_parents"<<endl;
                 if(fg.variableNodes.at(actNode).v_parents.size()==0){
-                    ////<<"v_parent: 0"<<endl;
-                    ////<<"next: "<<endl;
                     maxPathValue.push_back(fg.variableNodes.at(actNode).strain);
                 }else{
                     maxPathValue.push_back(fg.variableNodes.at(v_parent.at(0)).strain);
@@ -804,14 +689,9 @@ std::vector<std::vector<int> > maxSumAlgorithm(factorGraph fgS, std::vector<int>
                     pathWalk=0;
                     break;
                 }else{
-                    ////<<"maxStateNext"<<endl;
-                    ////<<"actNode) "<<actNode<<endl;
-                    ////<<"f_parent.at(0) "<<f_parent.at(0)<<endl;
-                    ////<<"fg.factorNodes.at(f_parent.at(0)).division: "<<fg.factorNodes.at(f_parent.at(0)).division<<endl;
-                    ////<<"v_parent.at(0) "<<v_parent.at(0)<<endl;
+            
                     actNode=fg.variableNodes.at(actNode).v_parents.at(0);
                     
-                    ////<<"findMessage(fg.factorNodes.at(f_parent.at(0)).backwardDown,v_parent.at(0))"<<findMessage(fg.factorNodes.at(f_parent.at(0)).backwardDown,v_parent.at(0))<<endl;
                     maxStateNext=fg.factorNodes.at(f_parent.at(0)).backwardDown.at(findMessage(fg.factorNodes.at(f_parent.at(0)).backwardDown,v_parent.at(0))).bd.at(maxState);
                 }
             }else{

@@ -1,4 +1,4 @@
-e0ddd1c9bce70ea8c8b2b0c3ba7f72ae *DESCRIPTION
+04df610d3d752b98a822a8da87e9fa02 *DESCRIPTION
 305e2e6b0c73c9d7e62f0d4114b3a947 *NAMESPACE
 2cfe1cc1e813d0c9e23871afb08fadee *R/DrawViterbiTree.R
 fd93518fdfc08ab6cebd34c9aca630f0 *R/HFMfit.R
@@ -6,15 +6,15 @@ fd93518fdfc08ab6cebd34c9aca630f0 *R/HFMfit.R
 15724fd0377bc3a6f5e381dc7804959b *man/DrawViterbiTree.Rd
 19a698de46e4aa6cdd486ded2e201373 *man/HFMfit.Rd
 26f3c60cc74ea80d11f5f5d51236efca *man/HFMviterbi.Rd
-049634a351e8cb40f487772778efd8f8 *src/BaumWelch.cpp
+e2cfe13bdad4ac7ca13fb89ea5b32068 *src/BaumWelch.cpp
 489eb59c99faae9bdbf00c5c10e01129 *src/BaumWelch.h
 437ab7993c7221419f6bca52e7e064dd *src/DebugConstants.h
 a77868dea15770219d93d5ea38807d59 *src/EmissionFunction.cpp
 f7879cac57b765b5f86dd46079a1b423 *src/EmissionFunction.h
-357aa83fae43e5fe144a07a3a79470d0 *src/FactorGraph.cpp
-6dcc4b93b360a5f5ef1d1bc23e2e0cc3 *src/FactorGraph.h
+92dde002177a27eb8dee4e41d167420b *src/FactorGraph.cpp
+90050bfcb9c168d2be4ee7a6f0d95370 *src/FactorGraph.h
 0a62e06c91d9ed7410e3cd43989d24fa *src/Makevars
-bb0a4b90b119fd685e7ba329373a60fb *src/MaxSum.cpp
+1f3d0da016410fe0a64d5018454ad6b7 *src/MaxSum.cpp
 6e477ea0f72fbb065c2e55fc9a581e05 *src/MaxSum.h
 bd4ad0c6e3d0aecbc08f357a83f292f0 *src/MemoryAllocation.cpp
 d294206c82d31fbee55bf2ab680a35a6 *src/MemoryAllocation.h
@@ -26,7 +26,7 @@ d294206c82d31fbee55bf2ab680a35a6 *src/MemoryAllocation.h
 ab4283e0ce5ac5dca9ee5a6803e02ad5 *src/RWrapperFunctions.cpp
 bb96a974a7b3a4f9d443a6b02d123ba3 *src/RWrapperFunctions.h
 56946c39883c5c32a91e7f8c44a8ad7d *src/RWrapperMS.cpp
-42043b3db1dcd8af709fcb393e23d61b *src/SumProduct.cpp
+30cc371db4cfdeb413ca5e02eea090f9 *src/SumProduct.cpp
 fb246f1b8421ee03bf1317ee42b6fcf7 *src/SumProduct.h
 5580dc8fa41d19b19d6361b19990ea14 *src/helpFunctions.cpp
 e6c2a39cef913891da492ea013f5280b *src/helpFunctions.h

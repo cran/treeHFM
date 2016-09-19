@@ -89,7 +89,7 @@ void addFactorNode(factorNode &f,int index, std::vector<std::vector<double> > pr
     f.probO=probO;
     if(index == 1){
         if(!maxSum){
-            msg msg_in_down;
+            msgD msg_in_down;
             msg_in_down.index=1;
             msg_in_down.msg=ones(size);
             f.msg_in_down.push_back(msg_in_down);
@@ -98,7 +98,7 @@ void addFactorNode(factorNode &f,int index, std::vector<std::vector<double> > pr
             mAL.msg=log(1.0/sum(ones(size)));
             f.acc_logS_msg_in_down.push_back(mAL);
         }else{
-            msg msg_in_down;
+            msgD msg_in_down;
             msg_in_down.index=1;
             msg_in_down.msg=zeros(size);
             f.msg_in_down.push_back(msg_in_down);
@@ -170,83 +170,63 @@ void addVariableNode(variableNode &v, int index,int observed,int leaf_node,std::
         v.observed = 0;
     }
 }
+/*
 void drawFactorNode(factorNode f){
-    // << "Index:" <<f.order<<endl;
-    // << "Factor Parents:" <<endl;
+    cout << "Index:" <<f.order<<endl;
+    cout << "Factor Parents:" <<endl;
     printVector(f.f_parents);
-    // <<endl<< "Factor Childs:" <<endl;
+    cout <<endl<< "Factor Childs:" <<endl;
     printVector(f.f_children);
-    // <<endl<< "Variable Parents:" <<endl;
+    cout <<endl<< "Variable Parents:" <<endl;
     printVector(f.v_parents);
-    // <<endl<< "Variable Childs:" <<endl;
+    cout <<endl<< "Variable Childs:" <<endl;
     printVector(f.v_children);
     
 }
 void printFactorNode(factorNode f){
-    // << "Index:" <<f.order<<endl;
-    // << "Factor Parents:" <<endl;
+    cout << "Index:" <<f.order<<endl;
+    cout << "Factor Parents:" <<endl;
     printVector(f.f_parents);
-    // <<endl<< "Factor Childs:" <<endl;
+    cout <<endl<< "Factor Childs:" <<endl;
     printVector(f.f_children);
-    // <<endl<< "Variable Parents:" <<endl;
+    cout <<endl<< "Variable Parents:" <<endl;
     printVector(f.v_parents);
-    // <<endl<< "Variable Childs:" <<endl;
+    cout <<endl<< "Variable Childs:" <<endl;
     printVector(f.v_children);
     
 }
 void printFactorGraph(struct factorGraph fg){
-    //<<"----------- FACTOR NODES ------------"<<endl;
+    cout<<"----------- FACTOR NODES ------------"<<endl;
     for(int i=300; i<400;i++){
-        //<<"Index:"<<i<<endl;
-        //<<fg.factorNodes.at(i).order<<endl;
-        //<<"factor parents:"<<endl;
+        cout<<"Index:"<<i<<endl;
+        cout<<fg.factorNodes.at(i).order<<endl;
+        cout<<"factor parents:"<<endl;
         printVector(fg.factorNodes.at(i).f_parents);
-        //<<"variable parents:"<<endl;
+        cout<<"variable parents:"<<endl;
         printVector(fg.factorNodes.at(i).v_parents);
-        //<<"factor children:"<<endl;
+        cout<<"factor children:"<<endl;
         printVector(fg.factorNodes.at(i).f_children);
-        //<<"variable children:"<<endl;
+        cout<<"variable children:"<<endl;
         printVector(fg.factorNodes.at(i).v_children);
-        //<<"variable neighbors:"<<endl;
+        cout<<"variable neighbors:"<<endl;
         printVector(fg.factorNodes.at(i).v_neighbors);
-        //<<"---"<<endl;
+        cout<<"---"<<endl;
     }
-    /*
-     //<<"----------- VARIABLE NODES ------------"<<endl;
-     for(int i=200; i<300;i++){
-     //<<"Index:"<<i<<endl;
-     //<<fg.variableNodes.at(i).order<<endl;
-     //<<"factor parents:"<<endl;
-     printVector(fg.variableNodes.at(i).f_parents);
-     //<<"variable parents:"<<endl;
-     printVector(fg.variableNodes.at(i).v_parents);
-     //<<"factor children:"<<endl;
-     printVector(fg.variableNodes.at(i).f_children);
-     //<<"variable children:"<<endl;
-     printVector(fg.variableNodes.at(i).v_children);
-     //<<"variable neighbors:"<<endl;
-     printVector(fg.variableNodes.at(i).v_neighbors);
-     //<<"factor neighbors:"<<endl;
-     printVector(fg.variableNodes.at(i).f_neighbors);
-     //<<"---"<<endl;
-     }
-     */
+ 
 }
-
+*/
 void createHMT(factorGraph &fg,std::vector<int> nodeIndices, std::vector<int> parents,std::vector<std::vector<int> > summationIndices,int maxSum,int vSize,std::vector<int>  indicesXD,char type,std::vector<std::vector<double> > observationProbabilities,int sizeMsgSeq,int sizeMsgDiv){
-    fg.factorNodes.resize(max(nodeIndices).value*2);
+   fg.factorNodes.resize(max(nodeIndices).value*2);
     fg.variableNodes.resize(max(nodeIndices).value*2);
     //std::vector<factorNode > f_list(max(nodeIndices).value*2); //factor node list
     //std::vector<variableNode > v_list(max(nodeIndices).value*2); //variable node list
     int lenObs=nodeIndices.size();
     std::vector<std::vector<int> > connectivity;
     for (int o=0; o<lenObs;o++){
-	       if(o>0){
                std::vector<int> nodeParent;
                nodeParent.push_back(nodeIndices[o]);
                nodeParent.push_back(parents[o]);
                connectivity.push_back(nodeParent);
-           }
     }
     //
     //printVector(connectivity);
@@ -261,8 +241,10 @@ void createHMT(factorGraph &fg,std::vector<int> nodeIndices, std::vector<int> pa
     std::vector<int> multipleTransitions;
     Max maxV=max(nodeIndices);
     int maxIndex=maxV.value;
-    for (int j=1 ; j<=lenObs;j++){
-        ////<<"j: "<<j<<endl;
+    int jNode;
+    for (int j=0 ; j<lenObs;j++){
+        jNode=nodeIndices.at(j);
+        //cout<<"jNode: "<<jNode<<endl;
         std::vector<int> f_parents;
         std::vector<int> f_children;
         std::vector<int> v_parents;
@@ -272,21 +254,22 @@ void createHMT(factorGraph &fg,std::vector<int> nodeIndices, std::vector<int> pa
         std::vector<int> f_children_s;
         std::vector<int> v_parents_s;
         std::vector<int> v_children_s;
-        if(j==1){
-            ////<<"found: "<<findIndex(connectivity,1,j)[0]<<endl;
-            std::vector<int> vT=connectivity.at(findIndex(connectivity,1,j)[0]); //can only be there 1 time?
+        if(j==0){
             //printVector(connectivity);
-            if(j==1){
+            //cout<<"found: "<<findIndex(connectivity,1,jNode)[0]<<endl;
+            
+            std::vector<int> vT=connectivity.at(findIndex(connectivity,1,jNode)[0]); //can only be there 1 time?
+            if(jNode==1){
             }
-            v_children_s.push_back(j);
+            v_children_s.push_back(jNode);
             v_children.push_back(vT.at(0));
             f_parents.push_back(1);
             //
             std::vector<int> f_childrenT;
             f_childrenT.push_back(vT[0]);
-            f_childrenT.push_back(j+maxIndex);
+            f_childrenT.push_back(jNode+maxIndex);
             //
-            ////<<"prob start"<<endl;
+            //cout<<"prob start"<<endl;
             std::vector<std::vector<double> > probOStart(max(nodeIndices).value*2);;
             /*
             if(type=='d'){
@@ -296,24 +279,24 @@ void createHMT(factorGraph &fg,std::vector<int> nodeIndices, std::vector<int> pa
             }
             */
             
-            probOStart.at(j)=observationProbabilities.at(j-1);
-            ////<<"probO"<<endl;
+            probOStart.at(jNode)=observationProbabilities.at(jNode-1);
+            //cout<<"probO"<<endl;
             //v_children.push_back(j+maxIndex);
             //int index,std::vector<double> probS,std::vector<double> probO ,std::vector<int> v_children,std::vector<int> v_parents,std::vector<int> f_children,std::vector<int> f_parents,std::vector<std::vector<int> > summationIndices,int maxNumMessages,int maxSum,int division,int observedFactor,std::vector<int>indicesXD
             int maxNodeIndex=max(nodeIndices).value*2;
             factorNode f;
-            addFactorNode(f,j,probOStart,v_children_s,v_parents_s,f_childrenT,f_parents_s,summationIndices,maxNodeIndex,maxSum,0,0,indicesXD,sizeMsgSeq);
+            addFactorNode(f,jNode,probOStart,v_children_s,v_parents_s,f_childrenT,f_parents_s,summationIndices,maxNodeIndex,maxSum,0,0,indicesXD,sizeMsgSeq);
             //int observedFactor,std::vector<int>indicesXD)
             //f_list.at(j)=f;
-            fg.factorNodes.at(j)=f;
+            fg.factorNodes.at(jNode)=f;
             //variable node
         }else{
-            std::vector<int> indicesChildren=findIndex(connectivity,1,j);
+            std::vector<int> indicesChildren=findIndex(connectivity,1,jNode);
             for(int i=0; i<indicesChildren.size();i++){
                 v_children.push_back(connectivity.at(indicesChildren.at(i))[0]);
             }
             
-            std::vector<int> indicesParents=findIndex(connectivity,0,j);
+            std::vector<int> indicesParents=findIndex(connectivity,0,jNode);
             if(indicesParents.size() >0){ // if a parent was found
                 v_parents.push_back(connectivity.at(indicesParents[0]).at(1)); //only 1 allowed
                 f_parents.push_back(v_parents.at(0)+1);
@@ -336,9 +319,9 @@ void createHMT(factorGraph &fg,std::vector<int> nodeIndices, std::vector<int> pa
             }
         }
         if(v_children.size() >0){
-            f_children.push_back(j+1);
+            f_children.push_back(jNode+1);
         }else{
-            endNodes.push_back(j);
+            endNodes.push_back(jNode);
             std::vector<int> f_children;
         }
         int division=0;
@@ -348,14 +331,14 @@ void createHMT(factorGraph &fg,std::vector<int> nodeIndices, std::vector<int> pa
             int MsgSizeTemp=sizeMsgDiv;
         }
         variableNode v;
-        addVariableNode(v,j,0,0,v_children,v_parents,f_children,f_parents,vSize,strain);
+        addVariableNode(v,jNode,0,0,v_children,v_parents,f_children,f_parents,vSize,strain);
         //v_list.at(j)=v;
-        fg.variableNodes.at(j)=v;
+        fg.variableNodes.at(jNode)=v;
         int leaf_node=0;
         if(v_children.size()>0){
             std::vector<int> factorNode_f_children=add(v_children,1);
             probO.clear();
-            ////<<"probO"<<endl;
+            //cout<<"probO"<<endl;
             std::vector<std::vector<double> > probO(max(nodeIndices).value*2);
             /*
             if(type=='d'){
@@ -375,18 +358,18 @@ void createHMT(factorGraph &fg,std::vector<int> nodeIndices, std::vector<int> pa
                 probO.at(v_child)=observationProbabilities.at(v_child-1);
             }
             std::vector<int> v_parentsF;
-            v_parentsF.push_back(j);
+            v_parentsF.push_back(jNode);
             //(j,startProb,probO,v_children,v_parents,f_childrenT,f_parents,summationIndices,max(nodeIndices)*2,maxSum,0,0,indicesXD);
             int maxNodeIndex=max(nodeIndices).value*2;
             factorNode f;
-            ////<<"addFactorNode"<<endl;
-            addFactorNode(f,j+1,probO,v_children,v_parentsF,factorNode_f_children,f_parents,summationIndices,maxNodeIndex,maxSum,division,0,indicesXD,MsgSizeTemp);//factor node right
+            //cout<<"addFactorNode"<<endl;
+            addFactorNode(f,jNode+1,probO,v_children,v_parentsF,factorNode_f_children,f_parents,summationIndices,maxNodeIndex,maxSum,division,0,indicesXD,MsgSizeTemp);//factor node right
             if(v_children.size()>1){
-                multipleTransitions.push_back(j+1);
+                multipleTransitions.push_back(jNode+1);
             }else{
-                singleTransitions.push_back(j+1);
+                singleTransitions.push_back(jNode+1);
             }
-            fg.factorNodes.at(j+1)=f;
+            fg.factorNodes.at(jNode+1)=f;
             
         }
         
@@ -400,6 +383,7 @@ void createHMT(factorGraph &fg,std::vector<int> nodeIndices, std::vector<int> pa
     fg.singleTransitions=singleTransitions;
     fg.endNodes=endNodes;
     fg.strainParents=strainParents;
+    //cout<<"factor graph created"<<endl;
 }
 
 
@@ -421,7 +405,7 @@ int findMessage(std::vector<msgB> msgV,int index){
     }
     return indF;
 }
-int findMessage(std::vector<msg> msgV,int index){
+int findMessage(std::vector<msgD> msgV,int index){
     int indF=-1;
     for(int i=0; i<msgV.size(); i++){
         if(msgV.at(i).index==index){
